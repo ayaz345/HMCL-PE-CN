@@ -65,7 +65,7 @@ class JsonUDP():
         assert(data['_tag'] == tagstr)
 
         if data['_type'] == 'error':
-            raise ValueError('Error: {}'.format(data['error']))
+            raise ValueError(f"Error: {data['error']}")
 
         assert(data['_type'] == 'begin')
 
@@ -74,7 +74,7 @@ class JsonUDP():
         # probably require parsing the cmdline passed to us :-(
         # assert(data['cmd'] == cmd)
 
-        result = list()
+        result = []
         error = None
 
         while True:
@@ -87,7 +87,7 @@ class JsonUDP():
 
             if data['_type'] == 'error':
                 # we still expect an end packet, so save the error
-                error = ValueError('Error: {}'.format(data['error']))
+                error = ValueError(f"Error: {data['error']}")
                 continue
 
             if data['_type'] == 'end':
@@ -96,8 +96,7 @@ class JsonUDP():
                 return result
 
             if data['_type'] != 'row':
-                raise ValueError('Unknown data type {} from '
-                                 'edge'.format(data['_type']))
+                raise ValueError(f"Unknown data type {data['_type']} from edge")
 
             # remove our boring metadata
             del data['_tag']
@@ -467,7 +466,7 @@ class SimpleHandler(http.server.BaseHTTPRequestHandler):
 
         tail = self.path.split('/')
         cmd = tail[2]
-        cmdline = cmd + ' ' + post_data
+        cmdline = f'{cmd} {post_data}'
 
         self._rpc(rpc.write, cmdline)
 

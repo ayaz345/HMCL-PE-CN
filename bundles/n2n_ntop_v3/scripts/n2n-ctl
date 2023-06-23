@@ -50,7 +50,7 @@ class JsonUDP():
         assert(data['_tag'] == tagstr)
 
         if data['_type'] == 'error':
-            raise ValueError('Error: {}'.format(data['error']))
+            raise ValueError(f"Error: {data['error']}")
 
         assert(data['_type'] == 'begin')
 
@@ -59,7 +59,7 @@ class JsonUDP():
         # probably require parsing the cmdline passed to us :-(
         # assert(data['cmd'] == cmd)
 
-        result = list()
+        result = []
         error = None
 
         while True:
@@ -72,7 +72,7 @@ class JsonUDP():
 
             if data['_type'] == 'error':
                 # we still expect an end packet, so save the error
-                error = ValueError('Error: {}'.format(data['error']))
+                error = ValueError(f"Error: {data['error']}")
                 continue
 
             if data['_type'] == 'end':
@@ -81,8 +81,7 @@ class JsonUDP():
                 return result
 
             if data['_type'] != 'row':
-                raise ValueError('Unknown data type {} from '
-                                 'edge'.format(data['_type']))
+                raise ValueError(f"Unknown data type {data['_type']} from edge")
 
             # remove our boring metadata
             del data['_tag']
@@ -108,7 +107,7 @@ class JsonUDP():
 
 def str_table(rows, columns):
     """Given an array of dicts, do a simple table print"""
-    result = list()
+    result = []
     widths = collections.defaultdict(lambda: 0)
 
     if len(rows) == 0:
@@ -129,10 +128,7 @@ def str_table(rows, columns):
 
     for row in rows:
         for col in columns:
-            if col in row:
-                data = row[col]
-            else:
-                data = ''
+            data = row[col] if col in row else ''
             result += "{:{}} ".format(data, widths[col])
         result += "\n"
 
@@ -198,10 +194,7 @@ subcmds = {
 def subcmd_default(rpc, args):
     """Just pass command through to edge"""
     cmdline = ' '.join([args.cmd] + args.args)
-    if args.write:
-        rows = rpc.write(cmdline)
-    else:
-        rows = rpc.read(cmdline)
+    rows = rpc.write(cmdline) if args.write else rpc.read(cmdline)
     return json.dumps(rows, sort_keys=True, indent=4)
 
 

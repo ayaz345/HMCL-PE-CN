@@ -27,7 +27,7 @@ random.seed(now) # note now is a floating point time value
 
 def rand_key():
     key=str()
-    for i in range(0,KEY_LEN):
+    for _ in range(0,KEY_LEN):
         key += "%02x"%( random.randint( 0, 255) )
 
     return key
